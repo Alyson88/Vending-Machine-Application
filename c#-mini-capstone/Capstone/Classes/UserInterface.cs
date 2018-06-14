@@ -8,7 +8,7 @@ namespace Capstone.Classes
 {
     public class UserInterface
     {
-        private VendingMachine vendingMachine;
+        private readonly VendingMachine vendingMachine;
 
         public UserInterface(VendingMachine vendingMachine) //Constructor takes in an thing of type VendingMachine or calls a method that does
         {
@@ -27,8 +27,40 @@ namespace Capstone.Classes
             Console.WriteLine("{1} Feed Money");
             Console.WriteLine("{2} Select Product");
             Console.WriteLine("[3] Finish Transation");
-           // Console.WriteLine($"Current Money Provided: ${Balance}");
+            Console.WriteLine($"Current Money Provided: ${vendingMachine.Balance}");
         }
+        public void PrintInventory()
+        {
+            foreach(KeyValuePair<string, VendingMachineItem> kvp in vendingMachine.Inventory)
+            {
+                Console.Write("{" + kvp.Key + "} " + kvp.Value.Name + " " + kvp.Value.QuantityRemaining + " $" + kvp.Value.Price);
+
+            }
+        }
+        public void PurchaseProcess()
+        {
+            PurchaseMenu();
+            string purchaseMenuSelectionString = Console.ReadLine();
+
+            if (purchaseMenuSelectionString == "1")
+            {
+                //balance
+            }
+            else if (purchaseMenuSelectionString == "2")
+            {
+                //call select product method
+            }
+            else if (purchaseMenuSelectionString == "3")
+            {
+                //call finish transaction method
+            }
+            else
+            {
+                Console.WriteLine("Please enter a valid choice");
+            }
+        }
+
+
 
         public void RunInterface()
         {
@@ -38,37 +70,17 @@ namespace Capstone.Classes
             {
                 MainMenu();
                 string mainMenuSelectionString = Console.ReadLine();
-                int mainMenuSelection = Convert.ToInt32(mainMenuSelectionString);
 
-                if (mainMenuSelection == 1)
+                if (mainMenuSelectionString == "1")
                 {
                     //display Inventory
-                    Console.WriteLine();
+                    PrintInventory();
                 }
-                else if (mainMenuSelection == 2)
+                else if (mainMenuSelectionString == "2")
                 {
-                    PurchaseMenu();
-                    string purchaseMenuSelectionString = Console.ReadLine();
-                    int purchaseMenuSelection = Convert.ToInt32(purchaseMenuSelectionString);
-
-                    if (purchaseMenuSelection == 1)
-                    {
-                        //balance
-                    }
-                    else if (purchaseMenuSelection == 2)
-                    {
-                        //call select product method
-                    }
-                    else if (purchaseMenuSelection == 3)
-                    {
-                        //call finish transaction method
-                    }
-                    else
-                    {
-                        Console.WriteLine("Please enter a valid choice");
-                    }
+                    PurchaseProcess();
                 }
-                else if (mainMenuSelection == 3)
+                else if (mainMenuSelectionString == "3")
                 {
                     //Exit Program
                     done = true;

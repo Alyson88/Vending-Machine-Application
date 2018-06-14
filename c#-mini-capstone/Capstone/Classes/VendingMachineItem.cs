@@ -8,22 +8,47 @@ namespace Capstone.Classes
 {
     public class VendingMachineItem
     {
-        /*
-         * 
-         * slot id (a1, b3, etc)
-         * in vendingmachine can use items of type vendingmachineitem //pass this in?
-         * name
-         * item type (A=chip, B=candy, C=drink, D=gum)
-         * price
-         * quantity remaining
-         * 
-         */
-
-
-        // Constructor:
-        public void VendingMachine()
+        private string name;
+        private decimal price;
+        private int quantityRemaining;
+        private string type;
+        
+        public string Name
         {
-            // set itemQuantity to 5
+            get
+            {
+                return name;
+            }
+        }
+        public decimal Price
+        {
+            get
+            {
+                return price;
+            }
+        }
+        public int QuantityRemaining
+        {
+            get
+            {
+                return quantityRemaining;
+            }
+            set
+            {
+                quantityRemaining = value;
+            }
+        }
+        public string Type
+        {
+            get
+            {
+                return type;
+            }
+        }
+        
+        public VendingMachineItem()
+        {
+            quantityRemaining = 5;
         }
     }
 }
