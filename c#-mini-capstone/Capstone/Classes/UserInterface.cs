@@ -54,16 +54,17 @@ namespace Capstone.Classes
                     }
                     else
                     {
-                        //if they enter in a wrong thing
+                        Console.WriteLine("Please enter a valid choice");
                     }
                 }
                 else if (mainMenuSelection==3)
                 {
                     //Exit Program
+                    done = true;
                 }
                 else
                 {
-                    //if they enter in a wrong thing
+                    Console.WriteLine("Please enter a valid choice");
                 }
 
             }
