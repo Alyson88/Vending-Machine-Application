@@ -10,21 +10,19 @@ namespace Capstone.Classes
     {
         private VendingMachine vendingMachine;
 
-        public UserInterface(VendingMachine vendingMachine)
+        public UserInterface(VendingMachine vendingMachine) //Constructor takes in an thing of type VendingMachine or calls a method that does
         {
-
+            this.vendingMachine = vendingMachine;
         }
 
-        public void RunInterface()
+        public void RunInterface() // 15 lines max
         {
             bool done = false;
             while (!done)
             {
-                Console.WriteLine("This is the UserInterface");
+                Console.WriteLine($"This is the UserInterface");
                 Console.ReadLine();
             }
-
         }
-
     }
 }
