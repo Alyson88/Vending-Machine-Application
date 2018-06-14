@@ -10,9 +10,9 @@ namespace Capstone.Classes
     {
         private VendingMachine vendingMachine;
 
-        public UserInterface(VendingMachine vendingMachine)
+        public UserInterface(VendingMachine vendingMachine) //Constructor takes in an thing of type VendingMachine or calls a method that does
         {
-
+            this.vendingMachine = vendingMachine;
         }
 
         public void MainMenu()
@@ -77,10 +77,7 @@ namespace Capstone.Classes
                 {
                     Console.WriteLine("Please enter a valid choice");
                 }
-
             }
-
         }
-
     }
 }
