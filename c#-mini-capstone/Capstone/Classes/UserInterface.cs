@@ -10,7 +10,7 @@ namespace Capstone.Classes
     {
         private readonly VendingMachine vendingMachine;
 
-        public UserInterface(VendingMachine vendingMachine) //Constructor takes in an thing of type VendingMachine or calls a method that does
+        public UserInterface(VendingMachine vendingMachine) 
         {
             this.vendingMachine = vendingMachine;
         }
@@ -33,9 +33,49 @@ namespace Capstone.Classes
         {
             foreach(KeyValuePair<string, VendingMachineItem> kvp in vendingMachine.Inventory)
             {
-                Console.Write("{" + kvp.Key + "} " + kvp.Value.Name + " " + kvp.Value.QuantityRemaining + " $" + kvp.Value.Price);
+                string soldOut = "";
+                if (kvp.Value.QuantityRemaining == 0)
+                {
+                    soldOut = " *****SOLD OUT*****";
+                }
+
+                Console.Write("{" + kvp.Key + "} " + kvp.Value.Name + " $" + kvp.Value.Price + " " + kvp.Value.QuantityRemaining + soldOut);
+                Console.WriteLine();
+            }
+        }
+        public void FeedMoney()
+        {
+            Console.Write("Please enter the whole dollar amount you want to transfer: $");
+            decimal amtTransferred = decimal.Parse(Console.ReadLine());
+            vendingMachine.IncreaseBalance(amtTransferred);
+        }
+        public void SelectProduct()
+        {
+            PrintInventory();
+            Console.WriteLine();
+            Console.Write("Please make a selection: ");
+            string selection = Console.ReadLine().ToUpper();
+
+            bool containsItem = vendingMachine.Inventory.ContainsKey(selection);
+
+            while (vendingMachine.Inventory[selection].QuantityRemaining == 0)
+            {
+                Console.WriteLine("This item is *****SOLD OUT***** please make a different selection: ");
+                selection = Console.ReadLine().ToUpper();
 
             }
+            while (!containsItem)
+            {
+                Console.WriteLine("This entry is not valid, please make a valid selection: ");
+                selection = Console.ReadLine().ToUpper();
+            }
+            vendingMachine.DispenseItem(selection);
+        }
+        public void FinishTransaction()
+        {
+            vendingMachine.FinishTransaction();
+            Console.WriteLine("Your account will be credited " + vendingMachine.BalanceReturned);
+            Console.WriteLine($"Current Money Provided: ${vendingMachine.Balance}");
         }
         public void PurchaseProcess()
         {
@@ -44,27 +84,24 @@ namespace Capstone.Classes
 
             if (purchaseMenuSelectionString == "1")
             {
-                //balance
+                FeedMoney();
             }
             else if (purchaseMenuSelectionString == "2")
             {
-                //call select product method
+                SelectProduct();
             }
-            else if (purchaseMenuSelectionString == "3")
+            else if (purchaseMenuSelectionString == "3") 
             {
-                //call finish transaction method
+                FinishTransaction();
             }
             else
             {
                 Console.WriteLine("Please enter a valid choice");
             }
         }
-
-
-
+        
         public void RunInterface()
         {
-
             bool done = false;
             while (!done)
             {
@@ -73,7 +110,6 @@ namespace Capstone.Classes
 
                 if (mainMenuSelectionString == "1")
                 {
-                    //display Inventory
                     PrintInventory();
                 }
                 else if (mainMenuSelectionString == "2")
@@ -82,7 +118,6 @@ namespace Capstone.Classes
                 }
                 else if (mainMenuSelectionString == "3")
                 {
-                    //Exit Program
                     done = true;
                 }
                 else

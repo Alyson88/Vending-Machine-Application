@@ -9,15 +9,12 @@ namespace Capstone.Classes
 {
     public class VendingMachine
     {
-        
 
-        // Variables:
         private decimal balance = 0M;
-
+        private string balanceReturned = "";
         private Dictionary<string, VendingMachineItem> inventory = new Dictionary<string, VendingMachineItem>();
-        
 
-        // Properties:
+
         public decimal Balance
         {
             get
@@ -29,7 +26,13 @@ namespace Capstone.Classes
                 balance = value;
             }
         }
-
+        public string BalanceReturned
+        {
+            get
+            {
+                return balanceReturned;
+            }
+        }
         public Dictionary<string, VendingMachineItem> Inventory
         {
             get
@@ -42,43 +45,41 @@ namespace Capstone.Classes
             }
         }
 
-        // Constructor:
 
-        // Methods:
-        
-        public void AdjustQuantity(string key)
+        public void DecreaseQuantity(string key)
         {
             VendingMachineItem item = inventory[key];
             item.QuantityRemaining -= 1;
         }
-
-        public ListItems()
+        public void IncreaseBalance(decimal money)
         {
-            //pull info from text file
-            //(A = chip, B = candy, C = drink, D = gum)
-            //dictionary key = slot id
-            //dictionary value = VendingMachineItems including {itemName, itemPrice, itemQuantity, itemType}
+            balance += money;
         }
-        
-        public SelectProduct()
+        public void DecreaseBalance(decimal money)
         {
-            //display ListItems()
-            // w/ ReadLine
+            balance -= money;
         }
-
-        public void DispenseItem()
+        public void DispenseItem(string slotID)
         {
-            //change money provided
-            //change inventory
-            //print message
-            //return to purchase menu
+            DecreaseBalance(inventory[slotID].Price);
+            DecreaseQuantity(slotID);
         }
-
         public void FinishTransaction()
         {
-            //give them back balance in nickles, dimes & quarters
-            //print new balance of 0
-            //return to MAIN menu
+            decimal b = balance * 100M;
+            int q = (int)b / 25;
+            int d = ((int)b - (q * 25)) / 10;
+            int n = ((int)b - (q * 25) - (d * 10)) / 5;
+            balanceReturned = $"{q} Quarters, {d} Dimes, {n} Nickels.";
+            balance = 0M;
         }
+        //public ListItems()
+        //{
+        //    //pull info from text file
+        //    //(A = chip, B = candy, C = drink, D = gum)
+        //    //dictionary key = slot id
+        //    //dictionary value = VendingMachineItems including {itemName, itemPrice, itemQuantity, itemType}
+        //}
+
     }
 }
