@@ -8,47 +8,34 @@ namespace Capstone.Classes
 {
     public class VendingMachineItem
     {
-        private string name;
-        private decimal price;
-        private int quantityRemaining;
-        private string type;
-        
         public string Name
         {
-            get
-            {
-                return name;
-            }
+            get;
         }
         public decimal Price
         {
-            get
-            {
-                return price;
-            }
+            get;
         }
         public int QuantityRemaining
         {
-            get
-            {
-                return quantityRemaining;
-            }
-            set
-            {
-                quantityRemaining = value;
-            }
+            get; set;
         }
         public string Type
         {
-            get
-            {
-                return type;
-            }
+            get;
         }
-        
-        public VendingMachineItem()
+        public string Message
         {
-            quantityRemaining = 5;
+            get; set;
+        }
+
+        public VendingMachineItem(string itemName, decimal itemPrice, string itemType, string message)
+        {
+            Name = itemName;
+            Price = itemPrice;
+            QuantityRemaining = 5;
+            Type = itemType;
+            Message = message;
         }
     }
 }
