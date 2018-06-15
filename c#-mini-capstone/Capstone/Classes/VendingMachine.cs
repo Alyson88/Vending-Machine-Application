@@ -9,11 +9,9 @@ namespace Capstone.Classes
 {
     public class VendingMachine
     {
-
         private decimal balance = 0M;
         private string balanceReturned = "";
         private Dictionary<string, VendingMachineItem> inventory = new Dictionary<string, VendingMachineItem>();
-
 
         public decimal Balance
         {
@@ -45,6 +43,39 @@ namespace Capstone.Classes
             }
         }
 
+        public void ListItems()
+        {
+            //pull info from text file
+            //(A = chip, B = candy, C = drink, D = gum)
+            //dictionary key = slot id
+            //dictionary value = VendingMachineItems including {itemName, itemPrice, itemQuantity, itemType}
+
+            string currentDirectory = Directory.GetCurrentDirectory();
+            string inputFile = "vendingmachine.csv";
+            string fullInputPath = Path.Combine(currentDirectory, inputFile);
+
+            try
+            {
+                using (StreamReader sr = new StreamReader(fullInputPath))
+                {
+
+                }
+            }
+            catch (IOException e) //catch a specific type of Exception
+            {
+                Console.WriteLine("Error reading the file");
+                Console.WriteLine(e.Message);
+            }
+        }
+
+        public void AuditLog() // Append
+        {
+            string currentDirectory = Directory.GetCurrentDirectory();
+            string outputFile = @"Log.txt";
+            string fullOutputPath = Path.Combine(currentDirectory, outputFile);
+
+
+        }
 
         public void DecreaseQuantity(string key)
         {
@@ -73,13 +104,6 @@ namespace Capstone.Classes
             balanceReturned = $"{q} Quarters, {d} Dimes, {n} Nickels.";
             balance = 0M;
         }
-        //public ListItems()
-        //{
-        //    //pull info from text file
-        //    //(A = chip, B = candy, C = drink, D = gum)
-        //    //dictionary key = slot id
-        //    //dictionary value = VendingMachineItems including {itemName, itemPrice, itemQuantity, itemType}
-        //}
 
     }
 }
