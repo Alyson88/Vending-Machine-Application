@@ -52,6 +52,11 @@
   </Choose>
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="FinishTransationMethod.cs" />
+    <Compile Include="DispenseItem.cs" />
+    <Compile Include="DecreaseBalance.cs" />
+    <Compile Include="IncreaseBalance.cs" />
+    <Compile Include="QuantityDecrease.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Capstone\Capstone.csproj">
