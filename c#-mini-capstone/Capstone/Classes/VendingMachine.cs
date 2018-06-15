@@ -11,10 +11,10 @@ namespace Capstone.Classes
     {
         private decimal balance = 0M;
         private string balanceReturned = "";
-        private string returnMessage = "";
         private Dictionary<string, VendingMachineItem> inventory = new Dictionary<string, VendingMachineItem>();
         private Dictionary<string, string> message = new Dictionary<string, string>();
 
+        // Properties
         public decimal Balance
         {
             get { return balance; }
@@ -38,12 +38,13 @@ namespace Capstone.Classes
             set { message = value; }
         }
 
-        //public string ReturnMessage
-        //{
-        //    get { return returnMessage; }
-        //    set { returnMessage = value; }
-        //}
-        
+        // Constructor
+        public VendingMachine()
+        {
+            ReadFile();
+        }
+
+        // Methods
         public void ReadFile()
         {
             string currentDirectory = Directory.GetCurrentDirectory();
@@ -76,12 +77,41 @@ namespace Capstone.Classes
             }
         }
 
-        //public void AuditLog() // Append
-        //{
-        //    string currentDirectory = Directory.GetCurrentDirectory();
-        //    string outputFile = @"Log.txt";
-        //    string fullOutputPath = Path.Combine(currentDirectory, outputFile);
-        //}
+        public void FeedMoneyAuditLog(decimal amtTransferred)
+        {
+            string currentDirectory = Directory.GetCurrentDirectory();
+            string outputFile = @"Log.txt";
+            string fullOutputPath = Path.Combine(currentDirectory, outputFile);
+
+            using (StreamWriter sw = new StreamWriter(fullOutputPath, true))
+            {
+                sw.WriteLine(DateTime.UtcNow + " FEED MONEY: $" + amtTransferred + " $" + Balance);
+            }
+        }
+
+        public void FinishTransactionAuditLog()
+        {
+            string currentDirectory = Directory.GetCurrentDirectory();
+            string outputFile = @"Log.txt";
+            string fullOutputPath = Path.Combine(currentDirectory, outputFile);
+
+            using (StreamWriter sw = new StreamWriter(fullOutputPath, true))
+            {
+                sw.WriteLine(DateTime.UtcNow + "GIVE CHANGE: $" + Balance + " $0.00");
+            }
+        }
+
+        public void SelectProductAuditLog(string name, string slotID, decimal beginningBalance)
+        {
+            string currentDirectory = Directory.GetCurrentDirectory();
+            string outputFile = @"Log.txt";
+            string fullOutputPath = Path.Combine(currentDirectory, outputFile);
+
+            using (StreamWriter sw = new StreamWriter(fullOutputPath, true))
+            {
+                sw.WriteLine(DateTime.UtcNow + " " + name + " " + slotID + " $" + beginningBalance + " $" + Balance);
+            }
+        }
 
         public void AddMessages()
         {
@@ -91,7 +121,6 @@ namespace Capstone.Classes
             message.Add("D", "Chew Chew, Yum!");
         }
     
-
         public void DecreaseQuantity(string key)
         {
             VendingMachineItem item = inventory[key];
@@ -121,8 +150,8 @@ namespace Capstone.Classes
             int d = ((int)b - (q * 25)) / 10;
             int n = ((int)b - (q * 25) - (d * 10)) / 5;
             balanceReturned = $"{q} Quarters, {d} Dimes, {n} Nickels.";
+            FinishTransactionAuditLog();
             balance = 0M;
-            //AuditLog();
         }
     }
 }
