@@ -1,7 +1,0 @@
-add & commit early & often
-    make sure it's compiling before pulling/pushing
-pull changes from repository to merge with your changes
-    resolve any merge conflicts
-    make sure it still compiles before pushing
-push
-

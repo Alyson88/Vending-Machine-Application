@@ -9,18 +9,20 @@ namespace Capstone.Classes
 {
     public class UserInterface
     {
+        // Variables:
         private readonly VendingMachine vendingMachine;
+        private int idColumnWidth = 6;
+        private int itemNameColumnWidth = 20;
+        private int dollarAmtColumnWidth = 10;
+        private int itemQtyColumnWidth = 3;
 
-        int idColumnWidth = 6;
-        int itemNameColumnWidth = 20;
-        int dollarAmtColumnWidth = 8;
-        int itemQtyColumnWidth = 3;
-
+        // Constructor?
         public UserInterface(VendingMachine vendingMachine)
         {
             this.vendingMachine = vendingMachine;
         }
 
+        // Methods:
         public void RunInterface()
         {
             bool done = false;
@@ -45,6 +47,7 @@ namespace Capstone.Classes
                 else
                 {
                     Console.WriteLine("Please enter a valid choice");
+                    Console.WriteLine();
                 }
             }
         }
@@ -53,7 +56,7 @@ namespace Capstone.Classes
         {
             Console.WriteLine("MAIN MENU:");
             Console.WriteLine("{1} Display Vending Machine Items");
-            Console.WriteLine("{2} Purchase");
+            Console.WriteLine("{2} Make a Purchase");
             Console.WriteLine("{3} Exit");
             Console.WriteLine();
             Console.Write("Please enter your menu selection: ");
@@ -101,6 +104,7 @@ namespace Capstone.Classes
                 else
                 {
                     Console.WriteLine("Please enter a valid choice");
+                    Console.WriteLine();
                 }
             }
         }
@@ -115,11 +119,12 @@ namespace Capstone.Classes
             Console.WriteLine();
             Console.Write("Please enter your menu selection: ");
         }
-
+        
         public void FeedMoney()
         {
             Console.Write("Please enter the whole dollar amount you want to transfer: $");
-            decimal amtTransferred = decimal.Parse(Console.ReadLine());
+            decimal amtTransferred = 0.00M;
+            amtTransferred = decimal.Parse(Console.ReadLine());
             Console.WriteLine();
 
             while (amtTransferred <= 0 || amtTransferred % 1 != 0)
@@ -128,9 +133,9 @@ namespace Capstone.Classes
                 amtTransferred = decimal.Parse(Console.ReadLine());
                 Console.WriteLine();
             }
-            
-            vendingMachine.IncreaseBalance(amtTransferred);
-            vendingMachine.FeedMoneyAuditLog(amtTransferred);
+
+            vendingMachine.IncreaseBalance(Math.Round(amtTransferred, 2));
+            vendingMachine.FeedMoneyAuditLog(Math.Round(amtTransferred, 2));
         }
 
         public void SelectProduct()

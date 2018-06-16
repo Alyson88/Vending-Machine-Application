@@ -1,0 +1,129 @@
+Module 1 Capstone Project:
+
+P   = Program.cs
+UI  = UserInterface.cs
+VM  = VendingMachine.cs
+VMI = VendingMachineItem.cs
+
+P   1- new VendingMachine (named vendingMachine)
+
+VM 		1.1- Initialize Variables: 
+VM			1.1.1- var messages (dictionary which holds the purchase response messages by type ID)
+VM			1.1.2- var currentDirectory (path to current file location)
+VM			1.1.3- var inputFile (name & extension of the file to read)
+VM			1.1.4- var fullInputPath (full path to the file to read)
+VM			1.1.5- var inventory (dictionary which holds the vendingMachineItems by slotID)
+VM			1.1.6- var outputFile (name & extension of the file to output to)
+VM			1.1.7- var fullOutputPath (full path to the file to output to)
+VM			1.1.8- var itemNameColumnWidth = 23
+VM			1.1.9- var dollarAmtColumnWidth = 10
+VM			1.1.10- var dateAndTimeColumnWidth = 21
+
+VM		1.2- Properties:
+VM			1.2.1- Messages (dictionary var messages access)
+VM			1.2.2- Inventory (dictionary var inventory access)
+
+VM  	1.3- CALL the VendingMachine() Constructor
+
+VM			1.3.1- CALL the AddMessages() Method
+VM				1.3.1.1- ADD the purchase messages by type to a private var dictionary (named messages)
+
+VM			1.3.2- CALL the ReadFile() Method
+VM				1.3.2.1- Run new StreamReader with var fullInputPath as a parameter
+VM					1.3.2.1.1- For each line in file:
+VM						1.3.2.1.1.1- Assign ivar slotID a value from file
+VM						1.3.2.1.1.2- Assign ivar itemName a value from file
+VM						1.3.2.1.1.3- Assign ivar itemPrice a value from file 
+VM						1.3.2.1.1.4- Assign ivar itemType a value from file 
+VM						1.3.2.1.1.5- Assign ivar message a value from the Message dictionary Property 
+
+VM						1.3.2.1.1.5- ADD new VendingMachineItem to var inventory dictionary (itemName, itemPrice, itemType, message)
+VMI							1.3.2.1.1.5.1- Properties:
+VMI								1.3.2.1.1.5.1.1 string Name
+VMI								1.3.2.1.1.5.1.2- decimal Price
+VMI								1.3.2.1.1.5.1.3- int QuantityRemaining
+VMI								1.3.2.1.1.5.1.4- string Type
+VMI								1.3.2.1.1.5.1.5- string Message
+VMI							1.3.2.1.1.5.2- CALL the VendingMachineItem(string itemName, decimal itemPrice, string itemType, string message) Constructor
+VMI								1.3.2.1.1.5.2.1- Name = itemName
+VMI								1.3.2.1.1.5.2.2- Price = itemPrice 
+VMI								1.3.2.1.1.5.2.3- QuantityRemaining = 5
+VMI								1.3.2.1.1.5.2.4- Type = itemType 
+VMI								1.3.2.1.1.5.2.5- Message = message 
+
+VM				1.3.2.2- PRINT "Error reading the file" if there is an exception
+VM				1.3.2.3- PRINT the contents of the exception message 
+
+VM			1.3.3- CALL the CreateAuditLog() Method
+VM				1.3.3.1- Run new StreamWriter with var fullOutputPath and false (overwrite) as parameters
+VM					1.3.3.1.1- Create the lot.txt file
+VM					1.3.3.1.2- Write the header row as the first line (DATE AND TIME, ACTION, $ AMT, $ BAL)
+
+P   2- new UserInterface (named userInterface)
+UI		2.1- Constructor?
+
+UI		2.2- Variables:
+UI			2.2.1- var idColumnWidth = 6
+UI			2.2.2- var itemNameColumnWidth = 20
+UI			2.2.3- var dollarAmtColumnWidth = 10
+UI			2.2.4- var itemQtyColumnWidth = 3
+
+P   3- CALL the RunInterface() Method in UI
+
+UI		3.1- Initialize Variables:
+UI			3.1.1- var done = false (done with MainMenu)
+
+UI  	3.2- CALL the MainMenu() Method 
+UI			3.2.1- PRINT the Main Menu
+UI				3.2.1.1- {1} Display Vending Machine Items
+UI				3.2.1.2- {2} Make a Purchase
+UI				3.2.1.3- {3} Exit
+UI			3.2.2- Ask for a selection
+			
+UI		3.3- Assign user input to var mainMenuSelectionString
+
+UI		3.4- IF user selects {1} Display Vending Machine Items
+
+UI			3.4.1- CALL the PrintInventory() Method
+UI				3.4.1.1- For each keyvaluepair in Inventory dictionary in VM:
+UI					3.4.1.1.1- var soldOut = ""
+UI					3.4.1.1.2- IF QuantityRemaining == 0
+UI						3.4.1.1.2.1- soldOut = " *****SOLD OUT*****
+UI					3.4.1.1.3- Write item values ({Key} Name Price QuantityRemaining soldOut(if app)
+UI			3.4.2- RETURN user back to step 3.2
+
+UI		3.5- ELSE IF user select {2} Make a Purchase
+
+UI			3.5.1- CALL the PurchaseProcess() Method
+UI				3.5.1.1- Initialize Variables:
+UI					3.5.1.1.1- var done = false (done with PurchaseMenu)
+
+UI				3.5.1.2- CALL PurchaseMenu() Method
+UI					3.5.1.2.1- 
+
+UI			3.5.2- RETURN user back to step 3.2
+
+UI		3.6- ELSE IF user selects {3} Exit
+UI			3.6.1- Assign var done = true (will exit the program)
+
+UI		3.7- ELSE 
+UI			3.7.1- WRITE Please enter a valid choice
+UI			3.7.2- RETURN user back to step 3.2
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+x
