@@ -8,8 +8,11 @@ namespace Capstone.Classes
 {
     public class VendingMachineItem
     {
+        private int initialQuantity = 5;
+
         public string Name { get; }
         public decimal Price { get; }
+        public int InitialQuantity { get { return initialQuantity; } set { initialQuantity = value; } }
         public int QuantityRemaining { get; set; }
         public string Type { get; }
         public string Message { get; set; }
@@ -18,9 +21,10 @@ namespace Capstone.Classes
         {
             Name = itemName;
             Price = itemPrice;
-            QuantityRemaining = 5;
+            QuantityRemaining = initialQuantity;
             Type = itemType;
             Message = message;
+            InitialQuantity = initialQuantity;
         }
     }
 }

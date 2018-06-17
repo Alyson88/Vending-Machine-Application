@@ -9,20 +9,16 @@ namespace Capstone.Classes
 {
     public class UserInterface
     {
-        // Variables:
         private readonly VendingMachine vendingMachine;
-        private int idColumnWidth = 6;
-        private int itemNameColumnWidth = 20;
-        private int dollarAmtColumnWidth = 10;
-        private int itemQtyColumnWidth = 3;
-
-        // Constructor?
+        private readonly int idColumnWidth = 6;
+        private readonly int itemNameColumnWidth = 20;
+        private readonly int dollarAmtColumnWidth = 10;
+        
         public UserInterface(VendingMachine vendingMachine)
         {
             this.vendingMachine = vendingMachine;
         }
 
-        // Methods:
         public void RunInterface()
         {
             bool done = false;
@@ -32,6 +28,12 @@ namespace Capstone.Classes
                 string mainMenuSelectionString = Console.ReadLine();
                 Console.WriteLine();
 
+                while (mainMenuSelectionString != "1" && mainMenuSelectionString != "2" && mainMenuSelectionString != "3" && mainMenuSelectionString != "4")
+                {
+                    Console.Write("Please enter a valid selection: ");
+                    mainMenuSelectionString = Console.ReadLine();
+                    Console.WriteLine();
+                }
                 if (mainMenuSelectionString == "1")
                 {
                     PrintInventory();
@@ -44,10 +46,13 @@ namespace Capstone.Classes
                 {
                     done = true;
                 }
-                else
+                else if (mainMenuSelectionString == "4")
                 {
-                    Console.WriteLine("Please enter a valid choice");
-                    Console.WriteLine();
+                    vendingMachine.SalesReport();
+                    string salesReportPath = (DateTime.Now.ToString("yyyyMMdd_hh_mm_ss_tt")) + "_Total_Sales_Report.txt";
+                    string fullSalesReportPath = Path.Combine(Directory.GetCurrentDirectory(), salesReportPath);
+                    Console.WriteLine($"Your Sales Report has been saved here: ");
+                    Console.WriteLine(fullSalesReportPath + "\n");
                 }
             }
         }
@@ -57,24 +62,26 @@ namespace Capstone.Classes
             Console.WriteLine("MAIN MENU:");
             Console.WriteLine("{1} Display Vending Machine Items");
             Console.WriteLine("{2} Make a Purchase");
-            Console.WriteLine("{3} Exit");
-            Console.WriteLine();
+            Console.WriteLine("{3} Exit\n");
             Console.Write("Please enter your menu selection: ");
         }
 
         public void PrintInventory()
         {
             Console.WriteLine("PRODUCT INVENTORY:");
-            Console.WriteLine("{ID}".PadRight(idColumnWidth) + "PRODUCT".PadRight(itemNameColumnWidth) + "PRICE".PadLeft(dollarAmtColumnWidth) + "  QTY");
+            Console.WriteLine("{ID}".PadRight(idColumnWidth) + "PRODUCT".PadRight(itemNameColumnWidth) + "PRICE".PadLeft(dollarAmtColumnWidth) + "   QTY");
             foreach (KeyValuePair<string, VendingMachineItem> kvp in vendingMachine.Inventory)
             {
-                string soldOut = "";
+                string qtyOrSoldOut = " (" + kvp.Value.QuantityRemaining + ")";
                 if (kvp.Value.QuantityRemaining == 0)
                 {
-                    soldOut = " *****SOLD OUT*****";
+                    qtyOrSoldOut = " *****SOLD OUT*****";
                 }
 
-                Console.WriteLine(("{" + kvp.Key + "}").PadRight(idColumnWidth) + (kvp.Value.Name).PadRight(itemNameColumnWidth) + ("$" + kvp.Value.Price).PadLeft(dollarAmtColumnWidth) + "  " + (kvp.Value.QuantityRemaining + "").PadRight(itemQtyColumnWidth) + soldOut);
+                Console.WriteLine(("{" + kvp.Key + "}").PadRight(idColumnWidth)
+                    + (kvp.Value.Name).PadRight(itemNameColumnWidth)
+                    + ("$" + kvp.Value.Price).PadLeft(dollarAmtColumnWidth) + "  "
+                    + qtyOrSoldOut);
             }
             Console.WriteLine();
         }
@@ -88,23 +95,31 @@ namespace Capstone.Classes
                 string purchaseMenuSelectionString = Console.ReadLine();
                 Console.WriteLine();
 
+                while (purchaseMenuSelectionString != "1" && purchaseMenuSelectionString != "2" && purchaseMenuSelectionString != "3")
+                {
+                    Console.Write("Please enter a valid selection: ");
+                    purchaseMenuSelectionString = Console.ReadLine();
+                    Console.WriteLine();
+                }
                 if (purchaseMenuSelectionString == "1")
                 {
                     FeedMoney();
                 }
                 else if (purchaseMenuSelectionString == "2")
                 {
-                    SelectProduct();
+                    if (vendingMachine.Balance == 0M)
+                    {
+                        Console.WriteLine("You need to add money before making a purchase\n");
+                    }
+                    else
+                    {
+                        SelectProduct();
+                    }
                 }
                 else if (purchaseMenuSelectionString == "3")
                 {
                     FinishTransaction();
                     done = true;
-                }
-                else
-                {
-                    Console.WriteLine("Please enter a valid choice");
-                    Console.WriteLine();
                 }
             }
         }
@@ -115,108 +130,81 @@ namespace Capstone.Classes
             Console.WriteLine("{1} Feed Money");
             Console.WriteLine("{2} Select Product");
             Console.WriteLine("{3} Finish Transation");
-            Console.WriteLine($"Current Money Provided: ${vendingMachine.Balance}");
-            Console.WriteLine();
+            Console.WriteLine($"Current Money Provided: ${vendingMachine.Balance}\n");
             Console.Write("Please enter your menu selection: ");
         }
-        
+
         public void FeedMoney()
         {
-            Console.Write("Please enter the whole dollar amount you want to transfer: $");
             decimal amtTransferred = 0.00M;
-            amtTransferred = decimal.Parse(Console.ReadLine());
-            Console.WriteLine();
 
-            while (amtTransferred <= 0 || amtTransferred % 1 != 0)
+            try
             {
-                Console.Write("Please enter a whole dollar amount greater than zero (0): ");
+                Console.Write("Please enter the whole dollar amount you want to transfer: $");
                 amtTransferred = decimal.Parse(Console.ReadLine());
                 Console.WriteLine();
+
+                while (amtTransferred <= 0 || amtTransferred % 1 != 0)
+                {
+                    Console.Write("Please enter a whole dollar amount greater than zero (0): ");
+                    amtTransferred = decimal.Parse(Console.ReadLine());
+                    Console.WriteLine();
+                }
+            }
+            catch (FormatException)
+            {
+                Console.WriteLine();
+                FeedMoney();
             }
 
-            vendingMachine.IncreaseBalance(Math.Round(amtTransferred, 2));
-            vendingMachine.FeedMoneyAuditLog(Math.Round(amtTransferred, 2));
+            vendingMachine.IncreaseBalance(Math.Round((decimal)amtTransferred, 2));
+            vendingMachine.FeedMoneyAuditLog(Math.Round((decimal)amtTransferred, 2));
         }
 
         public void SelectProduct()
         {
-            PrintInventory();
-            Console.Write("Please enter your product selection: ");
-            string selection = Console.ReadLine().ToUpper();
-            Console.WriteLine();
+            try
+            {
+                PrintInventory();
+                Console.Write("Please enter your product selection: ");
+                string selection = Console.ReadLine().ToUpper();
+                decimal beginningBalance = vendingMachine.Balance;
+                bool containsItem = vendingMachine.Inventory.ContainsKey(selection);
+                bool enoughQuantity = (vendingMachine.Inventory[selection].QuantityRemaining > 0);
+                bool enoughMoney = (beginningBalance >= vendingMachine.Inventory[selection].Price);
+                Console.WriteLine();
 
-            bool containsItem = vendingMachine.Inventory.ContainsKey(selection);
-            decimal beginningBalance = vendingMachine.Balance;
-
-            if (containsItem && beginningBalance < vendingMachine.Inventory[selection].Price)
-            {
-                Console.WriteLine($"The item you selected is ${vendingMachine.Inventory[selection].Price}, your available balance is ${vendingMachine.Balance}.");
-                Console.WriteLine();
-                Console.WriteLine("Please add additional money before attempting to make this purchase.");
-                Console.WriteLine();
-            }
-            else if (containsItem && vendingMachine.Inventory[selection].QuantityRemaining != 0 && beginningBalance >= vendingMachine.Inventory[selection].Price)
-            {
-                vendingMachine.DispenseItem(selection);
-                Console.WriteLine($"You purchased a {vendingMachine.Inventory[selection].Name} " +
-                    $"for ${vendingMachine.Inventory[selection].Price}, and have a remaining balance of ${vendingMachine.Balance}.");
-                Console.WriteLine(vendingMachine.Inventory[selection].Message);
-                Console.WriteLine();
-                vendingMachine.SelectProductAuditLog(vendingMachine.Inventory[selection].Name, selection, beginningBalance);
-            }
-            else if (!containsItem)
-            {
-                while (!containsItem)
+                if (!enoughMoney)
                 {
-                    Console.WriteLine("This entry is not valid, please make a valid selection: ");
-                    selection = Console.ReadLine().ToUpper();
-                    containsItem = vendingMachine.Inventory.ContainsKey(selection);
+                    Console.WriteLine($"The item you selected costs ${vendingMachine.Inventory[selection].Price}\n" +
+                        $"Your available balance is ${vendingMachine.Balance}\n" +
+                        $"Please add additional money before attempting to make this purchase\n");
                 }
-                if (beginningBalance < vendingMachine.Inventory[selection].Price)
+                else if (!enoughQuantity)
                 {
-                    Console.WriteLine($"The item you selected is ${vendingMachine.Inventory[selection].Price}, your available balance is ${vendingMachine.Balance}.");
-                    Console.WriteLine("Please add additional money before attempting to make this purchase.");
-                    Console.WriteLine();
+                    Console.WriteLine("This item is *****SOLD OUT*****\n");
                 }
                 else
                 {
-                    vendingMachine.DispenseItem(selection);
-                    Console.WriteLine($"You purchased a {vendingMachine.Inventory[selection].Name} " +
-                        $"for ${vendingMachine.Inventory[selection].Price}, and have a remaining balance of ${vendingMachine.Balance}.");
-                    Console.WriteLine(vendingMachine.Inventory[selection].Message);
-                    Console.WriteLine();
+                    vendingMachine.DecreaseBalance(vendingMachine.Inventory[selection].Price);
+                    vendingMachine.DecreaseQuantity(selection);
+                    Console.WriteLine($"You purchased {vendingMachine.Inventory[selection].Name} for ${vendingMachine.Inventory[selection].Price}\n" +
+                        $"Your remaining balance is ${vendingMachine.Balance}\n" +
+                        $"{vendingMachine.Inventory[selection].Message}\n");
                     vendingMachine.SelectProductAuditLog(vendingMachine.Inventory[selection].Name, selection, beginningBalance);
                 }
             }
-            else
+            catch (KeyNotFoundException)
             {
-                while (vendingMachine.Inventory[selection].QuantityRemaining == 0)
-                {
-                    Console.Write("This item is *****SOLD OUT***** please make a different selection: ");
-                    selection = Console.ReadLine().ToUpper();
-                }
-                if (beginningBalance < vendingMachine.Inventory[selection].Price)
-                {
-                    Console.WriteLine($"The item you selected is ${vendingMachine.Inventory[selection].Price}, your available balance is ${vendingMachine.Balance}.");
-                    Console.WriteLine();
-                    Console.WriteLine("Please add additional money before attempting to make this purchase.");
-                    Console.WriteLine();
-                }
-                else
-                {
-                    vendingMachine.DispenseItem(selection);
-                    Console.WriteLine($"You purchased a {vendingMachine.Inventory[selection].Name} " +
-                        $"for ${vendingMachine.Inventory[selection].Price}, and have a remaining balance of ${vendingMachine.Balance}. {vendingMachine.Inventory[selection].Message}");
-                    Console.WriteLine();
-
-                    vendingMachine.SelectProductAuditLog(vendingMachine.Inventory[selection].Name, selection, beginningBalance);
-                }
+                Console.WriteLine();
+                Console.WriteLine("That is not a valid selection\n");
             }
         }
 
         public void FinishTransaction()
         {
-            vendingMachine.FinishTransaction();
+            vendingMachine.FinishTransactionAuditLog();
+            vendingMachine.CalculateBalanceReturned();
             Console.WriteLine("Your account will be credited " + vendingMachine.BalanceReturned);
             Console.WriteLine();
             Console.WriteLine($"Current Money Provided: ${vendingMachine.Balance}");

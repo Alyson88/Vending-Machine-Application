@@ -9,24 +9,22 @@ namespace Capstone.Classes
 {
     public class VendingMachine
     {
-        // Variables:
         private Dictionary<string, string> message = new Dictionary<string, string>();
-        private static string currentDirectory = Directory.GetCurrentDirectory();
-        private static string inputFile = "vendingmachine.csv";
-        private string fullInputPath = Path.Combine(currentDirectory, inputFile);
+        private static readonly string currentDirectory = Directory.GetCurrentDirectory();
+        private static readonly string inputFile = "vendingmachine.csv";
+        private readonly string fullInputPath = Path.Combine(currentDirectory, inputFile);
         private Dictionary<string, VendingMachineItem> inventory = new Dictionary<string, VendingMachineItem>();
-        private static string outputFile = "Log.txt";
-        private string fullOutputPath = Path.Combine(currentDirectory, outputFile);
-        private int itemNameColumnWidth = 23;
-        private int dollarAmtColumnWidth = 10;
-        private int dateAndTimeColumnWidth = 21;
-
-
-        ///////////////////
+        private static readonly string outputFile = "Log.txt";
+        private readonly string fullOutputPath = Path.Combine(currentDirectory, outputFile);
+        private readonly int itemNameColumnWidth = 23;
+        private readonly int dollarAmtColumnWidth = 10;
+        private readonly int dateAndTimeColumnWidth = 25;
         private decimal balance = 0.00M;
         private string balanceReturned = "";
+        private decimal totalSales = 0.00M;
+        private static readonly string salesReportFile = (DateTime.Now.ToString("yyyyMMdd_hh_mm_ss_tt")) + "_Total_Sales_Report.txt";
+        private readonly string fullSalesReportPath = Path.Combine(currentDirectory, salesReportFile);
 
-        // Properties:
         public Dictionary<string, string> Message
         {
             get { return message; }
@@ -39,8 +37,6 @@ namespace Capstone.Classes
             set { inventory = value; }
         }
 
-        
-        ///////////////////
         public decimal Balance
         {
             get { return balance; }
@@ -52,7 +48,6 @@ namespace Capstone.Classes
             get { return balanceReturned; }
         }
 
-        // Constructor:
         public VendingMachine()
         {
             AddMessages();
@@ -60,7 +55,6 @@ namespace Capstone.Classes
             CreateAuditLog();
         }
 
-        // Methods:
         public void AddMessages()
         {
             message.Add("A", "Crunch Crunch, Yum!");
@@ -68,7 +62,7 @@ namespace Capstone.Classes
             message.Add("C", "Glug Glug, Yum!");
             message.Add("D", "Chew Chew, Yum!");
         }
-    
+
         public void ReadFile()
         {
             try
@@ -107,16 +101,14 @@ namespace Capstone.Classes
             }
         }
 
-
-        ///////////////////
         public void FeedMoneyAuditLog(decimal amtTransferred)
         {
             using (StreamWriter sw = new StreamWriter(fullOutputPath, true))
             {
-                sw.WriteLine((DateTime.UtcNow).ToString().PadRight(dateAndTimeColumnWidth)
-                    + ("FEED MONEY").PadRight(itemNameColumnWidth) 
-                    + ("$ " + Math.Round(amtTransferred,2)).PadLeft(dollarAmtColumnWidth) 
-                    + ("$ " + Math.Round(Balance,2)).PadLeft(dollarAmtColumnWidth));
+                sw.WriteLine(DateTime.Now.ToString("MM/dd/yyyy hh:mm:ss tt").PadRight(dateAndTimeColumnWidth)
+                    + ("FEED MONEY").PadRight(itemNameColumnWidth)
+                    + ("$ " + amtTransferred.ToString("#.00")).PadLeft(dollarAmtColumnWidth)
+                    + ("$ " + Math.Round(Balance, 2)).PadLeft(dollarAmtColumnWidth));
             }
         }
 
@@ -124,9 +116,9 @@ namespace Capstone.Classes
         {
             using (StreamWriter sw = new StreamWriter(fullOutputPath, true))
             {
-                sw.WriteLine((DateTime.UtcNow).ToString().PadRight(dateAndTimeColumnWidth)
-                    + "GIVE CHANGE".PadRight(itemNameColumnWidth) 
-                    + ("$ " + Math.Round(Balance,2)).PadLeft(dollarAmtColumnWidth)
+                sw.WriteLine(DateTime.Now.ToString("MM/dd/yyyy hh:mm:ss tt").PadRight(dateAndTimeColumnWidth)
+                    + "GIVE CHANGE".PadRight(itemNameColumnWidth)
+                    + ("$ " + Math.Round(Balance, 2)).PadLeft(dollarAmtColumnWidth)
                     + ("$ 0.00").PadLeft(dollarAmtColumnWidth));
             }
         }
@@ -135,10 +127,10 @@ namespace Capstone.Classes
         {
             using (StreamWriter sw = new StreamWriter(fullOutputPath, true))
             {
-                sw.WriteLine((DateTime.UtcNow).ToString().PadRight(dateAndTimeColumnWidth)
-                    + (name + " " + slotID).PadRight(itemNameColumnWidth) 
-                    + ("$ " + Math.Round(beginningBalance,2)).PadLeft(dollarAmtColumnWidth)
-                    + ("$ " + Math.Round(Balance,2)).PadLeft(dollarAmtColumnWidth));
+                sw.WriteLine(DateTime.Now.ToString("MM/dd/yyyy hh:mm:ss tt").PadRight(dateAndTimeColumnWidth)
+                    + (name + " " + slotID).PadRight(itemNameColumnWidth)
+                    + ("$ " + Math.Round(beginningBalance, 2)).PadLeft(dollarAmtColumnWidth)
+                    + ("$ " + Math.Round(Balance, 2)).PadLeft(dollarAmtColumnWidth));
             }
         }
 
@@ -150,29 +142,45 @@ namespace Capstone.Classes
 
         public void IncreaseBalance(decimal money)
         {
-            balance += Math.Round(money,2);
+            balance += Math.Round(money, 2);
         }
 
         public void DecreaseBalance(decimal money)
         {
             balance -= money;
+            totalSales += money;
         }
 
-        public void DispenseItem(string slotID)
+        public void CalculateBalanceReturned()
         {
-            DecreaseBalance(inventory[slotID].Price);
-            DecreaseQuantity(slotID);
-        }
-
-        public void FinishTransaction()
-        {
-            decimal b = balance * 100.00M;
+            string quarterOrQuarters = "Quarters";
+            string dimeOrDimes = "Dimes";
+            string nickelOrNickels = "Nickels";
+            decimal b = Balance * 100.00M;
             int q = (int)b / 25;
             int d = ((int)b - (q * 25)) / 10;
             int n = ((int)b - (q * 25) - (d * 10)) / 5;
-            balanceReturned = $"{q} Quarter(s), {d} Dime(s), {n} Nickel(s).";
-            FinishTransactionAuditLog();
+
+            if (q == 1) { quarterOrQuarters = "Quarter"; }
+            if (d == 1) { dimeOrDimes = "Dime"; }
+            if (n == 1) { nickelOrNickels = "Nickel"; }
+
+            balanceReturned = $"${Math.Round(Balance, 2)}: {q} {quarterOrQuarters}, {d} {dimeOrDimes}, and {n} {nickelOrNickels}";
             balance = 0.00M;
+        }
+
+        public void SalesReport()
+        {
+            using (StreamWriter sw = new StreamWriter(fullSalesReportPath, false))
+            {
+                foreach (KeyValuePair<string, VendingMachineItem> kvp in inventory)
+                {
+                    int quantitySold = kvp.Value.InitialQuantity - kvp.Value.QuantityRemaining;
+                    sw.WriteLine(kvp.Value.Name + "|" + quantitySold);
+                }
+                sw.WriteLine();
+                sw.WriteLine("**TOTAL SALES** $" + Math.Round(totalSales, 2));
+            }
         }
     }
 }
