@@ -48,6 +48,11 @@ namespace Capstone.Classes
             get { return balanceReturned; }
         }
 
+        public decimal TotalSales
+        {
+            get { return totalSales; }
+        }
+
         public VendingMachine()
         {
             AddMessages();
@@ -79,7 +84,7 @@ namespace Capstone.Classes
                         string itemType = splitLine[3];
                         string message = Message[slotID.Substring(0, 1)];
 
-                        inventory.Add(slotID, new VendingMachineItem(itemName, itemPrice, itemType, message));
+                        inventory.Add(slotID, new VendingMachineItem(slotID, itemName, itemPrice, itemType, message));
                     }
                 }
             }
