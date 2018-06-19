@@ -11,7 +11,7 @@ namespace CapstoneTests
     {
         static VendingMachine test = new VendingMachine();
         UserInterface myTestUI = new UserInterface(test);
-        VendingMachineItem myTestItem = new VendingMachineItem("Potato Crisps", 3.05M, "Chip", "Crunch Crunch, Yum!");
+        VendingMachineItem myTestItem = new VendingMachineItem("A1", "Potato Crisps", 3.05M, "Chip", "Crunch Crunch, Yum!");
         
         [TestMethod]
         public void CreateAuditLogTest()

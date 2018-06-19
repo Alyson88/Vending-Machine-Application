@@ -10,7 +10,7 @@ namespace CapstoneTests
         [TestMethod]
         public void Constructor_Initial_Quantity_Correct()
         {
-            VendingMachineItem test = new VendingMachineItem("name", 5.5M, "type", "message");
+            VendingMachineItem test = new VendingMachineItem("A1","name", 5.5M, "type", "message");
             Assert.AreEqual(5, test.QuantityRemaining);
         }
     }
